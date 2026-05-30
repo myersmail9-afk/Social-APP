@@ -8,10 +8,14 @@ struct StartDuelView: View {
 
     @State private var period: Duel.Period = .week
     @State private var wager: Int = 0
+    @State private var forfeitOn = false
+    @State private var forfeitCharity = SampleData.charities[0]
+    @State private var forfeitAmount = 10
     @State private var isStarting = false
     @State private var errorMessage: String?
 
     private let wagerOptions = [0, 10, 25, 50, 100]
+    private let forfeitAmounts = [5, 10, 25, 50]
 
     var body: some View {
         NavigationStack {
@@ -45,6 +49,25 @@ struct StartDuelView: View {
                          ? "A friendly duel — just points and pride."
                          : "Winner takes the \(wager * 2)-coin pot. Both of you stake \(wager).")
                         .font(.caption).foregroundStyle(.secondary)
+
+                    Toggle(isOn: $forfeitOn) {
+                        Label("Charity forfeit", systemImage: "heart.fill")
+                            .font(.headline)
+                    }
+                    .tint(Theme.accent)
+                    .padding(.top, 4)
+                    .disabled(isStarting)
+                    if forfeitOn {
+                        Picker("Amount", selection: $forfeitAmount) {
+                            ForEach(forfeitAmounts, id: \.self) { Text("$\($0)").tag($0) }
+                        }
+                        .pickerStyle(.segmented)
+                        Picker("Charity", selection: $forfeitCharity) {
+                            ForEach(SampleData.charities, id: \.self) { Text($0).tag($0) }
+                        }
+                        Text("Lose, and you donate $\(forfeitAmount) to \(forfeitCharity). A loss still does some good. ❤️")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
 
                     Button {
                         start(opponentID: nil)
@@ -99,9 +122,13 @@ struct StartDuelView: View {
 
     private func start(opponentID: UUID?) {
         isStarting = true
+        let forfeit = forfeitOn
+            ? Duel.Forfeit(charityName: forfeitCharity, amount: forfeitAmount)
+            : nil
         Task {
             do {
-                try await store.startDuel(opponentID: opponentID, period: period, wager: wager)
+                try await store.startDuel(opponentID: opponentID, period: period,
+                                          wager: wager, forfeit: forfeit)
                 dismiss()
             } catch {
                 errorMessage = error.localizedDescription
