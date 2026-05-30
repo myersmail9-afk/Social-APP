@@ -118,6 +118,77 @@ enum SampleData {
     }
 }
 
+// MARK: - Duels
+
+extension SampleData {
+    /// A believable in-progress duel record to make the feature feel alive.
+    static let standing = DuelStanding(
+        wins: 7, losses: 4, ties: 1,
+        points: 540,
+        currentWinStreak: 2, bestWinStreak: 4
+    )
+
+    /// One or two live duels so the Duels tab has something to show on launch.
+    static func activeDuels(friends: [User]) -> [Duel] {
+        let cal = Calendar.current
+        let now = Date()
+        var result: [Duel] = []
+
+        // A close week-long duel where you're narrowly ahead.
+        if let liam = friends.first(where: { $0.handle == "liampark" }) {
+            let start = cal.date(byAdding: .day, value: -4, to: now)!
+            let end = cal.date(byAdding: .day, value: 3, to: now)!
+            result.append(Duel(
+                opponent: liam, period: .week,
+                startDate: start, endDate: end,
+                myMinutes: 612, opponentMinutes: 640,
+                wasRandomMatch: false, myBaselineMinutes: 1300
+            ))
+        }
+
+        // A random-matched day duel where you're a touch behind (comeback framing).
+        if let maya = friends.first(where: { $0.handle == "mayac" }) {
+            let start = cal.startOfDay(for: now)
+            let end = cal.date(byAdding: .day, value: 1, to: start)!
+            result.append(Duel(
+                opponent: maya, period: .day,
+                startDate: start, endDate: end,
+                myMinutes: 96, opponentMinutes: 78,
+                wasRandomMatch: true, myBaselineMinutes: 192
+            ))
+        }
+
+        return result
+    }
+
+    /// A short history so the win/loss record reads as earned.
+    static func duelHistory(friends: [User]) -> [Duel] {
+        let cal = Calendar.current
+        let now = Date()
+        var result: [Duel] = []
+
+        func finished(_ handle: String, period: Duel.Period, daysAgo: Int,
+                      mine: Int, theirs: Int, random: Bool, baseline: Int) {
+            guard let opp = friends.first(where: { $0.handle == handle }) else { return }
+            let end = cal.date(byAdding: .day, value: -daysAgo, to: now)!
+            let start = cal.date(byAdding: period.calendarComponent, value: -1, to: end)!
+            result.append(Duel(
+                opponent: opp, period: period,
+                startDate: start, endDate: end,
+                myMinutes: mine, opponentMinutes: theirs,
+                wasRandomMatch: random, myBaselineMinutes: baseline
+            ))
+        }
+
+        finished("mayac", period: .week, daysAgo: 3, mine: 980, theirs: 1120, random: false, baseline: 1300)
+        finished("noahk", period: .day, daysAgo: 6, mine: 145, theirs: 120, random: true, baseline: 190)
+        finished("sofiar", period: .week, daysAgo: 11, mine: 1040, theirs: 1010, random: false, baseline: 1300)
+        finished("liampark", period: .month, daysAgo: 20, mine: 3900, theirs: 4600, random: false, baseline: 5200)
+
+        return result
+    }
+}
+
 /// A tiny seedable RNG so sample data is stable across launches.
 struct SeededGenerator: RandomNumberGenerator {
     private var state: UInt64

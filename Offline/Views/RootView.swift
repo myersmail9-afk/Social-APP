@@ -9,6 +9,9 @@ struct RootView: View {
             FriendsView()
                 .tabItem { Label("Friends", systemImage: "person.2.fill") }
 
+            DuelsView()
+                .tabItem { Label("Duels", systemImage: "bolt.fill") }
+
             FeedView()
                 .tabItem { Label("Feed", systemImage: "sparkles") }
 

@@ -15,6 +15,9 @@ final class AppStore {
     var me: User?
     var friends: [User] = []
     var feed: [Activity] = []
+    var duels: [Duel] = []
+    var duelHistory: [Duel] = []
+    var standing: DuelStanding = .empty
     var loadState: LoadState = .idle
 
     init(service: DataService? = nil) {
@@ -37,9 +40,15 @@ final class AppStore {
             async let user = service.currentUser()
             async let friendsList = service.friends()
             async let feedItems = service.feed()
+            async let activeDuels = service.activeDuels()
+            async let history = service.duelHistory()
+            async let standingValue = service.duelStanding()
             me = try await user
             friends = try await friendsList
             feed = try await feedItems
+            duels = try await activeDuels
+            duelHistory = try await history
+            standing = try await standingValue
             loadState = .loaded
         } catch {
             loadState = .failed(error.localizedDescription)
@@ -58,5 +67,13 @@ final class AppStore {
         if let index = feed.firstIndex(where: { $0.id == activity.id }) {
             feed[index].cheers = newCount
         }
+    }
+
+    /// Start a duel against a friend, or pass `nil` to be auto-matched.
+    @discardableResult
+    func startDuel(opponentID: UUID?, period: Duel.Period) async throws -> Duel {
+        let duel = try await service.startDuel(opponentID: opponentID, period: period)
+        duels = try await service.activeDuels()
+        return duel
     }
 }

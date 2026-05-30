@@ -7,9 +7,14 @@ final class MockDataService: DataService {
     private var me = SampleData.me
     private var friendList = SampleData.friends
     private var activities: [Activity] = []
+    private var duels: [Duel] = []
+    private var history: [Duel] = []
+    private var standing: DuelStanding = SampleData.standing
 
     init() {
         activities = SampleData.feed(me: me, friends: friendList)
+        duels = SampleData.activeDuels(friends: friendList)
+        history = SampleData.duelHistory(friends: friendList)
     }
 
     func currentUser() async throws -> User {
@@ -90,7 +95,7 @@ final class MockDataService: DataService {
 
         let now = Date()
         let end = Calendar.current.date(byAdding: period.calendarComponent, value: 1, to: now) ?? now
-        let baseline = (me.weeklyUsage.averageDailyMinutes) * windowDays(for: period)
+        let baseline = me.weeklyUsage.averageDailyMinutes * windowDays(for: period)
 
         let duel = Duel(
             opponent: opponent,
@@ -114,12 +119,6 @@ final class MockDataService: DataService {
         case .year: return 365
         }
     }
-
-    /// Simulate a little network latency so loading states are exercised.
-    private func fakeLatency() async throws {
-        try await Task.sleep(nanoseconds: 250_000_000)
-    }
-}
 
     /// Simulate a little network latency so loading states are exercised.
     private func fakeLatency() async throws {
