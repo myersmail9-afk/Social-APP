@@ -1,19 +1,19 @@
 import SwiftUI
 
-/// The app's tab bar: You · Friends · Feed · Profile.
+/// The app's tab bar: Friends · Feed · You · Profile.
 struct RootView: View {
     @Environment(AppStore.self) private var store
 
     var body: some View {
         TabView {
-            DashboardView()
-                .tabItem { Label("You", systemImage: "chart.pie.fill") }
-
             FriendsView()
                 .tabItem { Label("Friends", systemImage: "person.2.fill") }
 
             FeedView()
                 .tabItem { Label("Feed", systemImage: "sparkles") }
+
+            DashboardView()
+                .tabItem { Label("You", systemImage: "chart.pie.fill") }
 
             ProfileView()
                 .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
