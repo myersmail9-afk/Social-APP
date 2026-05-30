@@ -1,0 +1,43 @@
+import SwiftUI
+
+/// The app's tab bar: You · Friends · Feed · Profile.
+struct RootView: View {
+    @Environment(AppStore.self) private var store
+
+    var body: some View {
+        TabView {
+            DashboardView()
+                .tabItem { Label("You", systemImage: "chart.pie.fill") }
+
+            FriendsView()
+                .tabItem { Label("Friends", systemImage: "person.2.fill") }
+
+            FeedView()
+                .tabItem { Label("Feed", systemImage: "sparkles") }
+
+            ProfileView()
+                .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
+        }
+        .tint(Theme.accent)
+        .task {
+            if case .idle = store.loadState { await store.load() }
+        }
+        .overlay {
+            if case .failed(let message) = store.loadState {
+                ContentUnavailableView {
+                    Label("Couldn't load", systemImage: "wifi.exclamationmark")
+                } description: {
+                    Text(message)
+                } actions: {
+                    Button("Retry") { Task { await store.load() } }
+                        .buttonStyle(.borderedProminent)
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    RootView()
+        .environment(previewStore())
+}

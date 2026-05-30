@@ -1,0 +1,26 @@
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+*.xcworkspace/xcuserdata/
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+*.moved-aside
+
+# The project & Info.plist are generated from project.yml via XcodeGen.
+# Regenerate with `xcodegen generate` instead of committing them.
+Offline.xcodeproj/
+Offline/Info.plist
+
+# Swift Package Manager
+.swiftpm/
+.build/
+
+# macOS
+.DS_Store
+
+# Secrets / config
+*.xcconfig.local
+Secrets.plist
