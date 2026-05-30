@@ -65,6 +65,12 @@ struct Duel: Identifiable, Codable, Hashable {
     /// Your typical minutes for a window this size, before the duel — the
     /// baseline we measure improvement against.
     var myBaselineMinutes: Int
+    /// Coins each side staked. Winner takes the pot. Zero = a friendly duel.
+    var wager: Int = 0
+
+    /// The full pot on the line (both stakes combined).
+    var pot: Int { wager * 2 }
+    var hasStakes: Bool { wager > 0 }
 
     // MARK: - Status
 
@@ -145,6 +151,8 @@ struct DuelStanding: Codable, Hashable {
     var points: Int = 0
     var currentWinStreak: Int = 0
     var bestWinStreak: Int = 0
+    /// In-app coins — the no-real-money stake. Win duels to grow your stack.
+    var coins: Int = 100
 
     var totalDuels: Int { wins + losses + ties }
 

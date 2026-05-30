@@ -19,8 +19,14 @@ struct DuelDetailView: View {
                         ScoreBar(duel: duel)
                         ProgressView(value: duel.timeProgress)
                             .tint(Theme.accent)
-                        Text("+\(duel.pointsAtStake) points if you win")
-                            .font(.caption).foregroundStyle(Theme.accent)
+                        if duel.hasStakes {
+                            Label("\(duel.pot)-coin pot · +\(duel.pointsAtStake) pts if you win",
+                                  systemImage: "circle.hexagongrid.fill")
+                                .font(.caption).foregroundStyle(Theme.warn)
+                        } else {
+                            Text("+\(duel.pointsAtStake) points if you win")
+                                .font(.caption).foregroundStyle(Theme.accent)
+                        }
                     }
                 }
 

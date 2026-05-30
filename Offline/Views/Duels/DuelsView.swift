@@ -76,9 +76,12 @@ private struct StandingCard: View {
                             .font(.system(size: 30, weight: .bold, design: .rounded))
                     }
                     Spacer()
-                    Image(systemName: "trophy.fill")
-                        .font(.system(size: 34))
-                        .foregroundStyle(Theme.warn)
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Label("\(standing.coins)", systemImage: "circle.hexagongrid.fill")
+                            .font(.headline)
+                            .foregroundStyle(Theme.warn)
+                        Text("coins").font(.caption2).foregroundStyle(.secondary)
+                    }
                 }
 
                 if let toNext = standing.pointsToNextTier {
@@ -138,7 +141,12 @@ private struct DuelCard: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(duel.timeRemainingLabel).font(.caption.weight(.semibold))
                             .foregroundStyle(.secondary)
-                        Text("+\(duel.pointsAtStake) pts").font(.caption2).foregroundStyle(Theme.accent)
+                        if duel.hasStakes {
+                            Label("\(duel.pot)", systemImage: "circle.hexagongrid.fill")
+                                .font(.caption2).foregroundStyle(Theme.warn)
+                        } else {
+                            Text("+\(duel.pointsAtStake) pts").font(.caption2).foregroundStyle(Theme.accent)
+                        }
                     }
                 }
 

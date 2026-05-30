@@ -33,8 +33,9 @@ protocol DataService {
     func duelStanding() async throws -> DuelStanding
 
     /// Start a duel against a specific friend, or pass `nil` to be auto-matched.
+    /// `wager` is the coin stake put up by each side (0 for a friendly duel).
     @discardableResult
-    func startDuel(opponentID: UUID?, period: Duel.Period) async throws -> Duel
+    func startDuel(opponentID: UUID?, period: Duel.Period, wager: Int) async throws -> Duel
 }
 
 /// Errors surfaced from the data layer.
@@ -42,12 +43,14 @@ enum DataError: LocalizedError {
     case notFound
     case alreadyFriends
     case noOpponentsAvailable
+    case insufficientCoins
 
     var errorDescription: String? {
         switch self {
         case .notFound: return "We couldn't find anyone with that handle."
         case .alreadyFriends: return "You're already friends with them."
         case .noOpponentsAvailable: return "No friends available to duel right now — add a few first!"
+        case .insufficientCoins: return "Not enough coins for that stake. Win some duels to build your stack!"
         }
     }
 }

@@ -125,7 +125,8 @@ extension SampleData {
     static let standing = DuelStanding(
         wins: 7, losses: 4, ties: 1,
         points: 540,
-        currentWinStreak: 2, bestWinStreak: 4
+        currentWinStreak: 2, bestWinStreak: 4,
+        coins: 240
     )
 
     /// One or two live duels so the Duels tab has something to show on launch.
@@ -142,7 +143,8 @@ extension SampleData {
                 opponent: liam, period: .week,
                 startDate: start, endDate: end,
                 myMinutes: 612, opponentMinutes: 640,
-                wasRandomMatch: false, myBaselineMinutes: 1300
+                wasRandomMatch: false, myBaselineMinutes: 1300,
+                wager: 50
             ))
         }
 

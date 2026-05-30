@@ -7,8 +7,11 @@ struct StartDuelView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var period: Duel.Period = .week
+    @State private var wager: Int = 0
     @State private var isStarting = false
     @State private var errorMessage: String?
+
+    private let wagerOptions = [0, 10, 25, 50, 100]
 
     var body: some View {
         NavigationStack {
@@ -22,6 +25,25 @@ struct StartDuelView: View {
                     }
                     .pickerStyle(.segmented)
                     Text(period.tagline + "  ·  +\(period.points) pts to win")
+                        .font(.caption).foregroundStyle(.secondary)
+
+                    HStack {
+                        Text("Stake").font(.headline)
+                        Spacer()
+                        Label("\(store.standing.coins)", systemImage: "circle.hexagongrid.fill")
+                            .font(.subheadline).foregroundStyle(Theme.warn)
+                    }
+                    .padding(.top, 4)
+                    Picker("Stake", selection: $wager) {
+                        ForEach(wagerOptions, id: \.self) { amount in
+                            Text(amount == 0 ? "None" : "\(amount)").tag(amount)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .disabled(isStarting)
+                    Text(wager == 0
+                         ? "A friendly duel — just points and pride."
+                         : "Winner takes the \(wager * 2)-coin pot. Both of you stake \(wager).")
                         .font(.caption).foregroundStyle(.secondary)
 
                     Button {
@@ -79,7 +101,7 @@ struct StartDuelView: View {
         isStarting = true
         Task {
             do {
-                try await store.startDuel(opponentID: opponentID, period: period)
+                try await store.startDuel(opponentID: opponentID, period: period, wager: wager)
                 dismiss()
             } catch {
                 errorMessage = error.localizedDescription

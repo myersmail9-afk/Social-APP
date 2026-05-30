@@ -73,8 +73,10 @@ final class MockDataService: DataService {
         return standing
     }
 
-    func startDuel(opponentID: UUID?, period: Duel.Period) async throws -> Duel {
+    func startDuel(opponentID: UUID?, period: Duel.Period, wager: Int) async throws -> Duel {
         try await fakeLatency()
+
+        guard wager <= standing.coins else { throw DataError.insufficientCoins }
 
         // Friends not already locked in an active duel make eligible rivals.
         let busy = Set(duels.map { $0.opponent.id })
@@ -97,6 +99,9 @@ final class MockDataService: DataService {
         let end = Calendar.current.date(byAdding: period.calendarComponent, value: 1, to: now) ?? now
         let baseline = me.weeklyUsage.averageDailyMinutes * windowDays(for: period)
 
+        // Escrow the stake out of the wallet for the duration of the duel.
+        standing.coins -= wager
+
         let duel = Duel(
             opponent: opponent,
             period: period,
@@ -105,7 +110,8 @@ final class MockDataService: DataService {
             myMinutes: 0,
             opponentMinutes: 0,
             wasRandomMatch: opponentID == nil,
-            myBaselineMinutes: baseline
+            myBaselineMinutes: baseline,
+            wager: wager
         )
         duels.append(duel)
         return duel
