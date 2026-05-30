@@ -128,6 +128,35 @@ extension SampleData {
         "World Wildlife Fund", "charity: water"
     ]
 
+    /// The Toolkit — practical, supportive tactics for using your phone less.
+    /// The counterweight to competition: always something constructive to try.
+    static let toolkit: [ToolkitTip] = [
+        ToolkitTip(icon: "moon.fill", title: "Grayscale at night",
+                   detail: "Set your screen to greyscale after 9pm. Color is what makes apps moreish — remove it and scrolling loses its grip.",
+                   difficulty: .easy),
+        ToolkitTip(icon: "bell.slash.fill", title: "Kill non-human notifications",
+                   detail: "Turn off notifications from every app that isn't a real person messaging you. Fewer pings, fewer pickups.",
+                   difficulty: .easy),
+        ToolkitTip(icon: "timer", title: "Set a 30-minute app limit",
+                   detail: "Cap your heaviest app at 30 minutes a day. A small wall beats relying on willpower in the moment.",
+                   difficulty: .medium),
+        ToolkitTip(icon: "house.fill", title: "Charge it outside the bedroom",
+                   detail: "Leave the phone in another room overnight. Buy a $5 alarm clock. Mornings and sleep both get better.",
+                   difficulty: .medium),
+        ToolkitTip(icon: "square.grid.2x2", title: "Hide the dopamine apps",
+                   detail: "Move social and video apps off your home screen into a folder on page 2. Friction is your friend.",
+                   difficulty: .easy),
+        ToolkitTip(icon: "figure.walk", title: "Replace, don't just remove",
+                   detail: "Pair a habit: when you reach for the phone out of boredom, do 10 push-ups or step outside instead.",
+                   difficulty: .bold),
+        ToolkitTip(icon: "iphone.slash", title: "One screen-free hour daily",
+                   detail: "Pick a recurring hour with no phone at all — dinner, a walk, first thing in the morning. Protect it.",
+                   difficulty: .bold),
+        ToolkitTip(icon: "person.2.fill", title: "Tell a friend your goal",
+                   detail: "Accountability works. Start a duel, or just text a friend what you're aiming for this week.",
+                   difficulty: .easy)
+    ]
+
     /// A believable in-progress duel record to make the feature feel alive.
     static let standing = DuelStanding(
         wins: 7, losses: 4, ties: 1,

@@ -15,6 +15,9 @@ struct RootView: View {
             FeedView()
                 .tabItem { Label("Feed", systemImage: "sparkles") }
 
+            CoachView()
+                .tabItem { Label("Coach", systemImage: "sparkles.rectangle.stack.fill") }
+
             DashboardView()
                 .tabItem { Label("You", systemImage: "chart.pie.fill") }
 
@@ -23,7 +26,11 @@ struct RootView: View {
         }
         .tint(Theme.accent)
         .task {
-            if case .idle = store.loadState { await store.load() }
+            if case .idle = store.loadState {
+                await store.load()
+                await NotificationManager.shared.requestAuthorization()
+                store.fireEngagementNotifications()
+            }
         }
         .overlay {
             if case .failed(let message) = store.loadState {

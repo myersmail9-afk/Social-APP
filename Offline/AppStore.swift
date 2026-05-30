@@ -11,6 +11,7 @@ final class AppStore {
     }
 
     private let service: DataService
+    private let coach: CoachService
 
     var me: User?
     var friends: [User] = []
@@ -18,10 +19,13 @@ final class AppStore {
     var duels: [Duel] = []
     var duelHistory: [Duel] = []
     var standing: DuelStanding = .empty
+    var insights: [CoachInsight] = []
+    var toolkit: [ToolkitTip] = []
     var loadState: LoadState = .idle
 
-    init(service: DataService? = nil) {
+    init(service: DataService? = nil, coach: CoachService? = nil) {
         self.service = service ?? MockDataService()
+        self.coach = coach ?? MockCoachService()
     }
 
     /// Everyone — you and your friends — ranked by today's total screen time
@@ -49,6 +53,8 @@ final class AppStore {
             duels = try await activeDuels
             duelHistory = try await history
             standing = try await standingValue
+            toolkit = await coach.toolkit()
+            insights = await coach.insights(me: me ?? SampleData.me, friends: friends, duels: duels)
             loadState = .loaded
         } catch {
             loadState = .failed(error.localizedDescription)
@@ -60,6 +66,27 @@ final class AppStore {
         let friend = try await service.addFriend(handle: handle)
         friends = try await service.friends()
         return friend
+    }
+
+    /// Fire the two engagement notifications when warranted: an improvement
+    /// celebration and a rivalry warning for the closest active duel.
+    func fireEngagementNotifications() {
+        if let me {
+            let today = me.todayUsage?.totalMinutes ?? 0
+            let avg = me.weeklyUsage.averageDailyMinutes
+            if avg > 0, today < avg {
+                NotificationManager.shared.celebrateImprovement(savedMinutes: avg - today)
+            }
+        }
+        // Warn about the tightest active duel (margin within an hour).
+        if let close = duels.filter({ $0.isActive }).min(by: { $0.marginMinutes < $1.marginMinutes }),
+           close.marginMinutes <= 60 {
+            NotificationManager.shared.rivalryWarning(
+                opponentName: close.opponent.name,
+                marginMinutes: close.marginMinutes,
+                isWinning: close.isWinning
+            )
+        }
     }
 
     func cheer(_ activity: Activity) async {
@@ -75,6 +102,7 @@ final class AppStore {
         let duel = try await service.startDuel(opponentID: opponentID, period: period, wager: wager, forfeit: forfeit)
         duels = try await service.activeDuels()
         standing = try await service.duelStanding()
+        insights = await coach.insights(me: me ?? SampleData.me, friends: friends, duels: duels)
         return duel
     }
 }
