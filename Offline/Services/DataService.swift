@@ -33,9 +33,10 @@ protocol DataService {
     func duelStanding() async throws -> DuelStanding
 
     /// Start a duel against a specific friend, or pass `nil` to be auto-matched.
-    /// `wager` is the coin stake put up by each side (0 for a friendly duel).
+    /// `wager` is the coin stake put up by each side (0 for a friendly duel);
+    /// `forfeit` is an optional "lose and you donate" charity pledge.
     @discardableResult
-    func startDuel(opponentID: UUID?, period: Duel.Period, wager: Int) async throws -> Duel
+    func startDuel(opponentID: UUID?, period: Duel.Period, wager: Int, forfeit: Duel.Forfeit?) async throws -> Duel
 }
 
 /// Errors surfaced from the data layer.

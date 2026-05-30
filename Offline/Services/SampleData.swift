@@ -121,6 +121,13 @@ enum SampleData {
 // MARK: - Duels
 
 extension SampleData {
+    /// Charities a user can pledge a forfeit to. Real integrations later;
+    /// for now these power the picker and sample data.
+    static let charities = [
+        "St. Jude", "Doctors Without Borders", "Feeding America",
+        "World Wildlife Fund", "charity: water"
+    ]
+
     /// A believable in-progress duel record to make the feature feel alive.
     static let standing = DuelStanding(
         wins: 7, losses: 4, ties: 1,
@@ -156,7 +163,8 @@ extension SampleData {
                 opponent: maya, period: .day,
                 startDate: start, endDate: end,
                 myMinutes: 96, opponentMinutes: 78,
-                wasRandomMatch: true, myBaselineMinutes: 192
+                wasRandomMatch: true, myBaselineMinutes: 192,
+                forfeit: Duel.Forfeit(charityName: "St. Jude", amount: 10)
             ))
         }
 

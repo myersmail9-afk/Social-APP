@@ -73,7 +73,7 @@ final class MockDataService: DataService {
         return standing
     }
 
-    func startDuel(opponentID: UUID?, period: Duel.Period, wager: Int) async throws -> Duel {
+    func startDuel(opponentID: UUID?, period: Duel.Period, wager: Int, forfeit: Duel.Forfeit?) async throws -> Duel {
         try await fakeLatency()
 
         guard wager <= standing.coins else { throw DataError.insufficientCoins }
@@ -111,7 +111,8 @@ final class MockDataService: DataService {
             opponentMinutes: 0,
             wasRandomMatch: opponentID == nil,
             myBaselineMinutes: baseline,
-            wager: wager
+            wager: wager,
+            forfeit: forfeit
         )
         duels.append(duel)
         return duel

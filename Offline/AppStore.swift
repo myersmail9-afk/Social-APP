@@ -71,8 +71,8 @@ final class AppStore {
 
     /// Start a duel against a friend, or pass `nil` to be auto-matched.
     @discardableResult
-    func startDuel(opponentID: UUID?, period: Duel.Period, wager: Int) async throws -> Duel {
-        let duel = try await service.startDuel(opponentID: opponentID, period: period, wager: wager)
+    func startDuel(opponentID: UUID?, period: Duel.Period, wager: Int, forfeit: Duel.Forfeit?) async throws -> Duel {
+        let duel = try await service.startDuel(opponentID: opponentID, period: period, wager: wager, forfeit: forfeit)
         duels = try await service.activeDuels()
         standing = try await service.duelStanding()
         return duel

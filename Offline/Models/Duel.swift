@@ -51,6 +51,16 @@ struct Duel: Identifiable, Codable, Hashable {
     /// Where a duel stands once the clock runs out.
     enum Outcome: String, Codable { case pending, won, lost, tied }
 
+    /// A "lose and you donate" accountability pledge. Turns a loss into a good
+    /// deed rather than a punishment — keeps the tone supportive while raising
+    /// the real-world stakes. (Charged only on settlement, never up front.)
+    struct Forfeit: Codable, Hashable {
+        var charityName: String
+        var amount: Int   // whole dollars pledged if you lose
+
+        var label: String { "$\(amount) to \(charityName)" }
+    }
+
     var id: UUID = UUID()
     /// Snapshot of the opponent (denormalized so the duel renders offline).
     var opponent: User
@@ -67,10 +77,13 @@ struct Duel: Identifiable, Codable, Hashable {
     var myBaselineMinutes: Int
     /// Coins each side staked. Winner takes the pot. Zero = a friendly duel.
     var wager: Int = 0
+    /// Optional accountability pledge: if you lose, you donate to this cause.
+    /// Higher real-world stakes, but framed as doing good — not punishment.
+    var forfeit: Forfeit?
 
     /// The full pot on the line (both stakes combined).
     var pot: Int { wager * 2 }
-    var hasStakes: Bool { wager > 0 }
+    var hasStakes: Bool { wager > 0 || forfeit != nil }
 
     // MARK: - Status
 

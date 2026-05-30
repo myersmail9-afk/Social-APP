@@ -19,13 +19,23 @@ struct DuelDetailView: View {
                         ScoreBar(duel: duel)
                         ProgressView(value: duel.timeProgress)
                             .tint(Theme.accent)
-                        if duel.hasStakes {
-                            Label("\(duel.pot)-coin pot · +\(duel.pointsAtStake) pts if you win",
-                                  systemImage: "circle.hexagongrid.fill")
-                                .font(.caption).foregroundStyle(Theme.warn)
-                        } else {
-                            Text("+\(duel.pointsAtStake) points if you win")
-                                .font(.caption).foregroundStyle(Theme.accent)
+                        VStack(spacing: 6) {
+                            if duel.wager > 0 {
+                                Label("\(duel.pot)-coin pot · +\(duel.pointsAtStake) pts if you win",
+                                      systemImage: "circle.hexagongrid.fill")
+                                    .font(.caption).foregroundStyle(Theme.warn)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            } else {
+                                Text("+\(duel.pointsAtStake) points if you win")
+                                    .font(.caption).foregroundStyle(Theme.accent)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            if let forfeit = duel.forfeit {
+                                Label("Lose and you donate \(forfeit.label)",
+                                      systemImage: "heart.fill")
+                                    .font(.caption).foregroundStyle(Theme.over)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                         }
                     }
                 }

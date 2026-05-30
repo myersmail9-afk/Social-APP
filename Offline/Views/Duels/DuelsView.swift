@@ -141,11 +141,15 @@ private struct DuelCard: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(duel.timeRemainingLabel).font(.caption.weight(.semibold))
                             .foregroundStyle(.secondary)
-                        if duel.hasStakes {
+                        if duel.wager > 0 {
                             Label("\(duel.pot)", systemImage: "circle.hexagongrid.fill")
                                 .font(.caption2).foregroundStyle(Theme.warn)
                         } else {
                             Text("+\(duel.pointsAtStake) pts").font(.caption2).foregroundStyle(Theme.accent)
+                        }
+                        if duel.forfeit != nil {
+                            Image(systemName: "heart.fill")
+                                .font(.caption2).foregroundStyle(Theme.over)
                         }
                     }
                 }
