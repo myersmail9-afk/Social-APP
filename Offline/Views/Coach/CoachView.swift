@@ -6,12 +6,20 @@ import SwiftUI
 /// *losing* a duel still finds a reason to stay and improve.
 struct CoachView: View {
     @Environment(AppStore.self) private var store
+    @State private var showWrapped = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     headerCard
+
+                    Button {
+                        showWrapped = true
+                    } label: {
+                        wrappedPromoCard
+                    }
+                    .buttonStyle(.plain)
 
                     ForEach(store.insights) { insight in
                         InsightCard(insight: insight)
@@ -29,6 +37,25 @@ struct CoachView: View {
             }
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Coach")
+            .sheet(isPresented: $showWrapped) {
+                WeeklyWrappedView()
+            }
+        }
+    }
+
+    private var wrappedPromoCard: some View {
+        Card {
+            HStack(spacing: 12) {
+                Image(systemName: "gift.fill")
+                    .font(.title2).foregroundStyle(Color(hex: 0xFF5C8A))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Your Weekly Wrapped").font(.headline)
+                    Text("A shareable recap of your week — post it and challenge your friends.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").foregroundStyle(.secondary)
+            }
         }
     }
 
