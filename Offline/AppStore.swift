@@ -17,8 +17,8 @@ final class AppStore {
     var feed: [Activity] = []
     var loadState: LoadState = .idle
 
-    init(service: DataService = MockDataService()) {
-        self.service = service
+    init(service: DataService? = nil) {
+        self.service = service ?? MockDataService()
     }
 
     /// Everyone — you and your friends — ranked by today's total screen time
